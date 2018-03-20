@@ -1,0 +1,38 @@
+ - name: ensure file exists
+   copy:
+     content: ""
+     dest: /etc/yum.repos.d/logstash.repo
+     force: no
+     group: sys
+     owner: elkuser
+     mode: 0644
+
+ - name: insert block
+   blockinfile:
+    path: /etc/yum.repos.d/logstash.repo
+    block: |
+      [logstash-6.x]
+      name=Elastic repository for 6.x packages
+      baseurl=https://artifacts.elastic.co/packages/6.x/yum
+      gpgcheck=1
+      gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+      enabled=1
+      autorefresh=1
+      type=rpm-md
+
+ - name: install logstash
+   yum: pkg=logstash state=installed
+
+ - copy:
+    src: /tmp/logstash.conf
+    dest: /etc/logstash/conf.d/
+    owner: logstash
+    group: logstash
+    mode: 0644
+
+   
+ - name: start logstash
+   service:
+    name: logstash
+    state: started
+

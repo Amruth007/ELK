@@ -1,0 +1,14 @@
+---
+
+- hosts : test-servers
+  
+  tasks : 
+   - name : install logstash
+     yum : pkg=logstash state=installed
+
+     notify : 
+      - name : start logstash
+
+  handlers : 
+    - name : start nginx
+      service : name=logstash state=started
